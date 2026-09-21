@@ -47,6 +47,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
         _calculate();
         return;
       }
+      if (value == 'x²') {
+        _square();
+        return;
+      }
       if (value == '⌫') {
         if (_expression.isNotEmpty) {
           _expression = _expression.substring(0, _expression.length - 1);
@@ -71,6 +75,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
       _result = '';
       _justEvaluated = false;
     });
+  }
+
+  void _square() {
+    if (_expression.isEmpty) return;
+    try {
+      final parsed = Expression.parse(_expression);
+      final value = const ExpressionEvaluator().eval(parsed, {});
+      if (value is! num || value.isNaN || value.isInfinite) {
+        throw const FormatException('The result is not a valid number.');
+      }
+      final squared = value * value;
+      _expression = squared == squared.roundToDouble()
+          ? squared.toInt().toString()
+          : squared.toString();
+      _result = '';
+      _error = null;
+      _justEvaluated = false;
+    } catch (_) {
+      _result = '';
+      _error = 'Cannot calculate this expression';
+      _justEvaluated = false;
+    }
   }
 
   void _calculate() {
@@ -124,7 +150,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       ['7', '8', '9', '-'],
       ['4', '5', '6', '+'],
       ['1', '2', '3', '='],
-      ['0', '.', '', ''],
+      ['0', '.', 'x²', ''],
     ];
     return Scaffold(
       backgroundColor: colors.surface,

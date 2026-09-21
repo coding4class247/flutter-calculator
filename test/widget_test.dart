@@ -37,4 +37,15 @@ void main() {
 
     expect(find.text('Cannot calculate this expression'), findsOneWidget);
   });
+
+  testWidgets('squares the current expression', (tester) async {
+    await tester.pumpWidget(const MyApp());
+
+    await tapButtons(tester, '5');
+    await tester.tap(find.widgetWithText(FilledButton, 'x²'));
+    await tester.tap(find.widgetWithText(FilledButton, '='));
+    await tester.pump();
+
+    expect(find.text('25 = 25'), findsOneWidget);
+  });
 }
